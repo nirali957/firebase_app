@@ -2,17 +2,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class GoogleLoginScreen extends StatefulWidget {
+  const GoogleLoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<GoogleLoginScreen> createState() => _GoogleLoginScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+class _GoogleLoginScreenState extends State<GoogleLoginScreen> {
   GoogleSignInAccount? currentUser;
-  GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+
+  bool isSignIn = false;
+  bool google = false;
 
   @override
   void initState() {
@@ -39,8 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               InkWell(
-                onTap: () {
-                  signInWithGoogle();
+                onTap: () async {
+                  await signInWithGoogle();
+
+                  // debugPrint("Auth ----------->> ${auth.currentUser!.displayName}");
                 },
                 child: Container(
                   width: 200,
@@ -100,42 +105,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
         debugPrint("credential ------------->>>$credential");
 
-        await firebaseAuth.signInWithCredential(credential);
+        await auth.signInWithCredential(credential);
 
-        // await account.clearAuthCache();
-        // await googleSignIn.disconnect();
-        // await googleSignIn.signOut();
-        // currentUser = null;
+        await account!.clearAuthCache();
+        await googleSignIn.disconnect();
+        await googleSignIn.signOut();
+        currentUser = null;
       }
     });
   }
 
-/*  signInWithGoogle() async {
-    currentUser = await googleSignIn.signIn();
+  /*Future<UserCredential> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
 
-    if (currentUser != null) {
-      debugPrint('''
-          Google Logged in!
-          Google Id: ${currentUser!.id}
-          Email: ${currentUser!.email};
-          Name: ${currentUser!.displayName ?? ""};
-          Profile Pic: ${currentUser!.photoUrl ?? ""};
-      ''');
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-        final GoogleSignInAuthentication? googleAuth = await currentUser?.authentication;
+    debugPrint("Google Auth accessToken ------------->>>${googleAuth!.accessToken}");
+    debugPrint("Google Auth idToken ------------->>>${googleAuth.idToken}");
 
-        debugPrint("Google Auth accessToken ------------->>>${googleAuth!.accessToken}");
-        debugPrint("Google Auth idToken ------------->>>${googleAuth.idToken}");
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
-        OAuthCredential credential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+    debugPrint("credential ------------->>>$credential");
 
-        debugPrint("credential ------------->>>$credential");
+    googleSignIn.disconnect();
 
-        await firebaseAuth.signInWithCredential(credential);
-
-    }
+    // Once signed in, return the UserCredential
+    return await auth.signInWithCredential(credential);
   }*/
 }
