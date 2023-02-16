@@ -51,7 +51,9 @@ class _EmailPasswordLoginScreenState extends State<EmailPasswordLoginScreen> {
             ),
             const SizedBox(height: 15),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                userLogIn();
+              },
               style: ButtonStyle(
                 fixedSize: MaterialStateProperty.all(const Size(200, 45)),
               ),
@@ -80,5 +82,31 @@ class _EmailPasswordLoginScreenState extends State<EmailPasswordLoginScreen> {
         ),
       ),
     );
+  }
+
+  userLogIn() async {
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      if (auth.currentUser!.emailVerified) {
+        debugPrint("currentUser ----------->>> ${auth.currentUser}");
+      }
+    } on FirebaseAuthException catch (e) {
+      debugPrint("e.code ----------->>> ${e.code}");
+      if (e.code == 'invalid-email') {
+        debugPrint('The invalid email provided.');
+      } else if (e.code == 'user-not-found') {
+        debugPrint('Email is not exist in the app');
+      } else if (e.code == 'wrong-password') {
+        debugPrint('The password provided is Wrong');
+      } else if (e.code == 'unknown') {
+        debugPrint('Please put data in field');
+      }
+    } catch (e) {
+      debugPrint("Error ----->> $e");
+    }
   }
 }
