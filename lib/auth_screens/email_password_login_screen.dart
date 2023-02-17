@@ -1,3 +1,4 @@
+import 'package:firebase_app/app_flow/home_screen.dart';
 import 'package:firebase_app/auth_screens/email_password_sign_in_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,9 @@ class _EmailPasswordLoginScreenState extends State<EmailPasswordLoginScreen> {
 
       if (auth.currentUser!.emailVerified) {
         debugPrint("currentUser ----------->>> ${auth.currentUser}");
+        navigator();
+      } else {
+        debugPrint("Please verify your email");
       }
     } on FirebaseAuthException catch (e) {
       debugPrint("e.code ----------->>> ${e.code}");
@@ -108,5 +112,15 @@ class _EmailPasswordLoginScreenState extends State<EmailPasswordLoginScreen> {
     } catch (e) {
       debugPrint("Error ----->> $e");
     }
+  }
+
+  navigator() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const HomeScreen(),
+      ),
+      (route) => false,
+    );
   }
 }
