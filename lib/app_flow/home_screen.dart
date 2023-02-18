@@ -25,10 +25,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.file(
-              File(image!.path),
-              height: 200,
-            ),
+            image != null
+                ? Image.file(
+                    File(image!.path),
+                    height: 200,
+                  )
+                : const SizedBox(),
             const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () {

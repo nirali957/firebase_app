@@ -1,4 +1,4 @@
-import 'package:firebase_app/app_flow/home_screen.dart';
+import 'package:firebase_app/app_flow/fire_store_screen.dart';
 import 'package:firebase_app/auth_screens/email_password_login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => const HomeScreen(),
+              builder: (context) => const FireStoreScreen(),
             ),
             (route) => false,
           );
